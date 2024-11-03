@@ -22,7 +22,7 @@ impl Application {
             tokio::spawn(async move {
                 let request = read_socket(&mut socket).await.unwrap();
 
-                let response = generate_response(request).unwrap();
+                let response = generate_response(request);
 
                 write_socket(&mut socket, &response).await.unwrap();
             });
