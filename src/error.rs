@@ -9,5 +9,5 @@ pub enum Error {
     LoadConfig(std::env::VarError),
 
     #[error("Error Run Server: {0}")]
-    RunServer(Axum::Error),
+    RunServer(std::io::Error),
 }
