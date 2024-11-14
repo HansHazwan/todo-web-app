@@ -4,4 +4,7 @@ use thiserror::Error;
 pub enum Error {
     #[error("Error Bind Listener: {0}")]
     BindListener(tokio::io::Error),
+
+    #[error("Error Load Config: {0}")]
+    LoadConfig(std::env::VarError),
 }
