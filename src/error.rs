@@ -7,4 +7,7 @@ pub enum Error {
 
     #[error("Error Load Config: {0}")]
     LoadConfig(std::env::VarError),
+
+    #[error("Error Run Server: {0}")]
+    RunServer(Axum::Error),
 }

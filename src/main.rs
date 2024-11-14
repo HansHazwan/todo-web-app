@@ -1,6 +1,10 @@
 mod error;
+mod router;
 
 use crate::error::Error;
+use crate::router::initialize_router;
+
+use tokio::net::TcpListener;
 use dotenvy::dotenv;
 use std::env;
 
@@ -21,12 +25,24 @@ async fn main() -> Result<(), Error> {
     let database_address = env::var("DATABASE_ADDRESS")
         .map_err(|e| Error::LoadConfig(e))?;
 
-    println!("Server Address: {}", server_address);
-    println!("Server Port: {}", server_port);
-    println!("Database Username: {}", database_username);
-    println!("Database Password: {}", database_password);
-    println!("Database Name: {}", database_name);
-    println!("Database Address: {}", database_address);
+    let ip_address = format!("{}:{}", server_address, server_port);
+    let database_url = format!(
+        "mysql://{}:{}@{}/{}",
+        database_username,
+        database_password,
+        database_address,
+        database_name,
+    );
+
+    let listener = TcpListener::bind(&ip_address)
+        .await
+        .map_err(|e| Error::BindListener(e))?;
+
+    let router = initialize_router();
+
+    axum::serve(listener, router)
+        .await
+        .map_err(|e| Error::RunServer(e))?;
 
     Ok(())
 }
